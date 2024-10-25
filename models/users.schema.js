@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
     },
     net_worth:{
         type:Number,
+        default:0
     },
     created_at: {
         type: Date,  // Use Date type without invoking it
