@@ -4,7 +4,7 @@ import { createStamp,getAllStamps,getStampsByCategory,getStamp} from "../control
 
 import  upload  from '../middlewares/multer.middleware.js';
 const router=express.Router()
-router.post('/createStamp',upload.single('image'),authenticate,createStamp)
+router.post('/createStamp',authenticate,upload.single('image'),createStamp)
 router.get('/:stampId',authenticate,getStamp)
 router.get('/getStamps',authenticate,getAllStamps)
 router.get('/:categoryId',getStampsByCategory)

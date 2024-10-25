@@ -7,7 +7,7 @@ export const authenticate = (req, res, next) => {
     if (!token) {
         return res.status(401).json({ message: "No token provided, authorization denied" });
     }
-
+    console.log('hello world')
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
          req.user = decoded.userId;  // Attach decoded token to the request
