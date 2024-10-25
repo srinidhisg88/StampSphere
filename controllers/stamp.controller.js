@@ -4,7 +4,7 @@ import category from "../models/categories.schema.js";
 export const createStamp = async (req, res) => {
   const { name, description, starting_bid, categoryName} = req.body;
   const image=req.file
-  const result = await cloudinary.uploader.upload(image1.path);
+  const result = await cloudinary.uploader.upload(image.path);
     const imageUrl =  result.secure_url;
   try {
     const categoryObj = await category.findOne({ categoryName });
