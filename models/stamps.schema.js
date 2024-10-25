@@ -14,7 +14,7 @@ const stampSchema = new Schema({
     description: { type: String, required: true },
     starting_bid: { type: Number, required: true, min: 0 },
     is_sold: { type: Boolean, default: false },
-    auction_end_date: { type: Date, required: true },
+    auction_end_date: { type: Date, required: false },
     seller_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
     bids: [bidSchema],
