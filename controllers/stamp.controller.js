@@ -1,15 +1,14 @@
 import Stamp from "../models/stamps.schema.js";
 import category from "../models/categories.schema.js";
-import {v2 as cloudinary} from 'cloudinary';
+import path from 'path';
 export const createStamp = async (req, res) => {
   const { name, description, starting_bid, categoryName} = req.body;
   const image=req.file
-  const result = await cloudinary.uploader.upload(image.path);
-    const imageUrl =  result.secure_url;
+  
   try {
     const categoryObj = await category.findOne({ categoryName });
     if (!categoryObj) return res.status(400).json({ message: "Invalid category" });
-
+    const imagePath = path.join('uploads', req.file.filename);
     const stamp = new Stamp({
       name,
       description,
@@ -17,7 +16,7 @@ export const createStamp = async (req, res) => {
       auction_end_date:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       seller_id: req.user,
       category: categoryObj._id,
-      image:imageUrl
+      image:imagePath
     });
     await stamp.save();
     res.status(201).json(stamp);
