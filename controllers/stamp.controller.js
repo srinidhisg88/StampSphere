@@ -10,16 +10,27 @@ export const createStamp = async (req, res) => {
     const categoryObj = await category.findOne({ categoryName });
     if (!categoryObj) return res.status(400).json({ message: "Invalid category" });
     const imagePath = path.join('uploads', req.file.filename);
-    await Stamp.create({name,
+    // await Stamp.create({name,
+    //     description,
+    //     starting_bid,
+    //     auction_end_date:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    //     seller_id: req.user,
+    //     category: categoryObj._id,
+    //     image:imagePath}).then((res)=>{
+    //         const result=res
+    //         return res.status(201).json(result);
+    //     })
+
+    const stamp = new Stamp({
+        name,
         description,
         starting_bid,
-        auction_end_date:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        seller_id: req.user,
+        auction_end_date,
+        seller_id: req.user._id,
         category: categoryObj._id,
-        image:imagePath}).then((res)=>{
-            const result=res
-            return res.status(201).json(result);
-        })
+      });
+      const result=await stamp.save();
+      return res.status(201).json(result);
     
     
   } catch (error) {
