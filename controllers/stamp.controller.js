@@ -2,43 +2,29 @@ import Stamp from "../models/stamps.schema.js";
 import category from "../models/categories.schema.js";
 import path from 'path';
 export const createStamp = async (req, res) => {
-  console.log(req.body)
-  const { name, description, starting_bid, categoryName} = req.body;
-  
-  
-//   try {
-    const categoryObj = await category.findOne({ categoryName });
-    if (!categoryObj) return res.status(400).json({ message: "Invalid category" });
+    console.log(req.body);
+    const { name, description, starting_bid, categoryName } = req.body;
     const imagePath = path.join('uploads', req.file.filename);
-    await Stamp.create({name,
+  
+    try {
+      const categoryObj = await category.findOne({ categoryName });
+      if (!categoryObj) return res.status(400).json({ message: "Invalid category" });
+  
+      const newStamp = await Stamp.create({
+        name,
         description,
         starting_bid,
-        auction_end_date:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        auction_end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         seller_id: req.user,
         category: categoryObj._id,
-        image:imagePath}).then((res)=>{
-            const result=res
-            return res.status(201).json(result);
-        }).catch((err)=>{
-            return res.status(500).json({ message: "Error creating stamp", error: error.message });
-        })
-
-    // const stamp = new Stamp({
-    //     name,
-    //     description,
-    //     starting_bid,
-    //     seller_id: req.user,
-    //     category: categoryObj._id,
-    //     image:imagePath
-    //   });
-    //   const result=await stamp.save();
-    //   return res.status(201).json(result);
-    
-    
-//   } catch (error) {
-//     res.status(500).json({ message: "Error creating stamp", error: error.message });
-//   }
-};
+        image: imagePath,
+      });
+  
+      res.status(201).json(newStamp);
+    } catch (error) {
+      res.status(500).json({ message: "Error creating stamp", error: error.message });
+    }
+  };
 
 export const getStamp=async (req,res)=>{
     const { stampId } = req.params;
