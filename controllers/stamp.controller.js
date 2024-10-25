@@ -3,23 +3,23 @@ import category from "../models/categories.schema.js";
 import path from 'path';
 export const createStamp = async (req, res) => {
   const { name, description, starting_bid, categoryName} = req.body;
-  const image=req.file
+  
   
   try {
     const categoryObj = await category.findOne({ categoryName });
     if (!categoryObj) return res.status(400).json({ message: "Invalid category" });
     const imagePath = path.join('uploads', req.file.filename);
-    const stamp = new Stamp({
-      name,
-      description,
-      starting_bid,
-      auction_end_date:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      seller_id: req.user,
-      category: categoryObj._id,
-      image:imagePath
-    });
-    await stamp.save();
-    res.status(201).json(stamp);
+    await Stamp.create({name,
+        description,
+        starting_bid,
+        auction_end_date:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        seller_id: req.user,
+        category: categoryObj._id,
+        image:imagePath}).then((res)=>{
+            return res.status(201).json(stamp);
+        })
+    
+    
   } catch (error) {
     res.status(500).json({ message: "Error creating stamp", error: error.message });
   }
