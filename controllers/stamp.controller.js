@@ -25,9 +25,9 @@ export const createStamp = async (req, res) => {
         name,
         description,
         starting_bid,
-        auction_end_date,
-        seller_id: req.user._id,
+        seller_id: req.user,
         category: categoryObj._id,
+        image:imagePath
       });
       const result=await stamp.save();
       return res.status(201).json(result);
