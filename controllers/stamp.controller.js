@@ -26,6 +26,26 @@ export const createStamp = async (req, res) => {
   }
 };
 
+export const getStamp=async (req,res)=>{
+    const { stampId } = req.params;
+
+  try {
+    // Find the stamp by ID, populating related fields like 'bids' and references
+    const stamp = await Stamp.findById(stampId)
+      .populate('seller_id', 'name email') // Populate seller details
+      .populate('category', 'name'); // Populate category name if needed
+
+    if (!stamp) {
+      return res.status(404).json({ message: 'Stamp not found' });
+    }
+
+    res.status(200).json(stamp);
+  } catch (error) {
+    console.error('Error retrieving stamp:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
 export const getAllStamps = async (req, res) => {
   try {
     const stamps = await Stamp.find().populate("seller_id", "username email").populate("category", "category");
