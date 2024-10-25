@@ -16,7 +16,7 @@ export const createStamp = async (req, res) => {
         seller_id: req.user,
         category: categoryObj._id,
         image:imagePath}).then((res)=>{
-            return res.status(201).json(stamp);
+            return res.status(201).json(res);
         })
     
     
