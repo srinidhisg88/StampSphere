@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 dotenv.config()
 export const registerUser=async (req,res,next)=>{
-    const {username,password,email,role}=req.body
+    const {username,password,email,role,net_worth}=req.body
     if (password.length < 6) {
         return res.status(400).json({ message: "Password less than 6 characters" })
       }
@@ -17,6 +17,7 @@ export const registerUser=async (req,res,next)=>{
               password,
               email,
               role,
+              net_worth,
               created_at:Date.now()
             }).then((user) =>{
                 

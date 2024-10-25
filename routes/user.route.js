@@ -1,10 +1,7 @@
 import express from 'express';
-import { registerUser,login,logoutUser } from '../controllers/auth.controller.js';
+import { authenticate } from '../middlewares/auth.middleware.js';
+import { getUsersByNetWorth } from '../controllers/user.controller.js';
 
-const router = express.Router();
-
-// User registration route
-router.post('/register', registerUser);
-router.post('/login',login)
-router.post('/logout',logoutUser)
-export default router;
+const router=express.Router()
+router.get('/getUsers',authenticate,getUsersByNetWorth)
+export default router

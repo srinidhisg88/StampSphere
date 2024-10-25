@@ -8,4 +8,5 @@ router.post('/createStamp',authenticate,upload.single('image'),createStamp)
 router.get('/:stampId',authenticate,getStamp)
 router.get('/getStamps',authenticate,getAllStamps)
 router.get('/:categoryId',getStampsByCategory)
+
 export default router

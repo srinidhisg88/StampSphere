@@ -21,6 +21,9 @@ const userSchema = new mongoose.Schema({
         default: 'USER',
         required: true,
     },
+    net_worth:{
+        type:Number,
+    },
     created_at: {
         type: Date,  // Use Date type without invoking it
         default: Date.now,  // Pass the function reference directly
