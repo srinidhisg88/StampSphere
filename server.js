@@ -3,7 +3,7 @@ import connectDb from './config/db.js';
 import cors from 'cors';
 import router from './routes/index.js';
 import dotenv from 'dotenv';
-
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 const app = express();
@@ -14,7 +14,8 @@ connectDb();
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: [`http://localhost:${PORT}`], credentials: true }));
+app.use(cookieParser())
+app.use(cors({ origin: [`http://localhost:5713`], credentials: true }));
 
 // Routes
 app.use('/api', router);
