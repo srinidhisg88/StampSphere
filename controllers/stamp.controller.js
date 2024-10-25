@@ -2,6 +2,7 @@ import Stamp from "../models/stamps.schema.js";
 import category from "../models/categories.schema.js";
 import path from 'path';
 export const createStamp = async (req, res) => {
+  console.log(req.body)
   const { name, description, starting_bid, categoryName} = req.body;
   
   
