@@ -2,7 +2,7 @@ import Stamp from "../models/stamps.schema.js";
 import category from "../models/categories.schema.js";
 export const createStamp=async (req,res,next)=>{
     const {name,description,categoryName,image}=req.body
-    const ncategory=await category.find({categoryName})
+    const ncategory=await category.findOne({categoryName:categoryName})
     try{
     await Stamp.create({
         name,
@@ -31,8 +31,8 @@ export const getAllStamps = async (req, res) => {
 };
 
 export const getStampsByCategory=async (req,res)=>{
-    const {cateogryId}=req.params
-    if(!cateogryId){
+    const {categoryId}=req.params
+    if(!categoryId){
         return res.status(400).json({message:'cateogry id is required'})
     }
     try{
