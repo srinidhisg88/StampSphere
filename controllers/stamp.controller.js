@@ -6,7 +6,7 @@ export const createStamp = async (req, res) => {
   const { name, description, starting_bid, categoryName} = req.body;
   
   
-  try {
+//   try {
     const categoryObj = await category.findOne({ categoryName });
     if (!categoryObj) return res.status(400).json({ message: "Invalid category" });
     const imagePath = path.join('uploads', req.file.filename);
@@ -33,9 +33,9 @@ export const createStamp = async (req, res) => {
       return res.status(201).json(result);
     
     
-  } catch (error) {
-    res.status(500).json({ message: "Error creating stamp", error: error.message });
-  }
+//   } catch (error) {
+//     res.status(500).json({ message: "Error creating stamp", error: error.message });
+//   }
 };
 
 export const getStamp=async (req,res)=>{
