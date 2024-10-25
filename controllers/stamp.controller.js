@@ -1,44 +1,43 @@
 import Stamp from "../models/stamps.schema.js";
 import category from "../models/categories.schema.js";
-export const createStamp=async (req,res,next)=>{
-    const {name,description,categoryName,image}=req.body
-    const ncategory=await category.findOne({categoryName:categoryName})
-    try{
-    await Stamp.create({
-        name,
-        description,
-        created_at:Date.now(),
-        image,
-        category:ncategory._id,
-        user_id:req.user._id
 
-    }).then((newStamp)=>{
-        return res.status(201).json({ message: 'Stamp created successfully', stamp: newStamp });
-    })
+export const createStamp = async (req, res) => {
+  const { name, description, starting_bid, categoryName} = req.body;
+  try {
+    const categoryObj = await category.findOne({ categoryName });
+    if (!categoryObj) return res.status(400).json({ message: "Invalid category" });
 
-    }catch(error){
-        return res.status(500).json({ message: 'Error creating stamp', error: error.message });
-    }
-}
-
-export const getAllStamps = async (req, res) => {
-    try {
-        const stamps = await Stamp.find().populate('user_id','username email').populate('category','categoryName'); // Populate user and category details
-        return res.status(200).json(stamps);
-    } catch (error) {
-        return res.status(500).json({ message: 'Error retrieving stamps', error: error.message });
-    }
+    const stamp = new Stamp({
+      name,
+      description,
+      starting_bid,
+      auction_end_date:new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      seller_id: req.user,
+      category: categoryObj._id,
+    });
+    await stamp.save();
+    res.status(201).json(stamp);
+  } catch (error) {
+    res.status(500).json({ message: "Error creating stamp", error: error.message });
+  }
 };
 
-export const getStampsByCategory=async (req,res)=>{
-    const {categoryId}=req.params
-    if(!categoryId){
-        return res.status(400).json({message:'cateogry id is required'})
-    }
-    try{
-        const stamps=await Stamp.find({category:categoryId})
-        return res.status(200).json(stamps)
-    }catch(error){
-        return res.status(500).json({ message: 'Error retrieving stamps by category', error: error.message})
-    }
-}
+export const getAllStamps = async (req, res) => {
+  try {
+    const stamps = await Stamp.find().populate("seller_id", "username email").populate("category", "category");
+    res.status(200).json(stamps);
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving stamps", error: error.message });
+  }
+};
+
+export const getStampsByCategory = async (req, res) => {
+  const { categoryId } = req.params;
+  try {
+    const stamps = await Stamp.find({ category: categoryId }).populate("seller_id", "username email");
+    res.status(200).json(stamps);
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving stamps", error: error.message });
+  }
+};
+
