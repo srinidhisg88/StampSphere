@@ -1,18 +1,28 @@
-const express=require('express')
-const app=express()
-const connectDb=require('./config/db')
-const cors=require('cors')
-connectDb()
-app.use(express.json())
+import express from 'express';
+import connectDb from './config/db.js';
+import cors from 'cors';
+import router from './routes/index.js';
+import dotenv from 'dotenv';
 
-require('dotenv').config()
-const PORT=process.env.PORT||5000
+dotenv.config();
 
-app.use(cors({origin:[`http://localhost:${PORT}`],credentials:true}))
+const app = express();
+const PORT = process.env.PORT || 5000;
 
+// Connect to the database
+connectDb();
 
-app.listen(PORT,()=>{console.log(`server running on port ${PORT} `)})
-app.get('/',(req,res)=>{
-    // console.log('index route')
-    res.send('index route')
-})
+// Middleware
+app.use(express.json());
+app.use(cors({ origin: [`http://localhost:${PORT}`], credentials: true }));
+
+// Routes
+app.use('/api', router);
+app.get('/', (req, res) => {
+    res.send('index route');
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
