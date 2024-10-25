@@ -43,37 +43,45 @@ app.get('/', (req, res) => {
 // Start the server
 
 // Socket.IO logic for real-time bidding
+const bidTimers = new Map();
+
 io.on('connection', (socket) => {
-    console.log('New user connected');
-  
-    // Listening for bid events
-    socket.on('placeBid', async ({ stampId, userId, bidAmount }) => {
-      try {
-        const stamp = await Stamp.findById(stampId);
-        // Check if the bid is higher than the current highest bid
-        if (bidAmount > stamp.current_highest_bid) {
-          // Update bid details
-          stamp.bids.push({ bidder: userId, amount: bidAmount });
-          stamp.current_highest_bid = bidAmount;
-          stamp.top_bidder = userId;
-          await stamp.save();
-  
-          // Emit an updated bid event to all clients
-          io.emit('newBid', { stampId, current_highest_bid: bidAmount, top_bidder: userId });
-        } else {
-          socket.emit('error', { message: 'Bid must be higher than the current highest bid' });
-        }
-      } catch (error) {
-        console.error("Error processing bid:", error);
-        socket.emit('error', { message: 'Error processing bid' });
+  console.log('New user connected');
+
+  socket.on('placeBid', async ({ stampId, userId, bidAmount }) => {
+    try {
+      const stamp = await Stamp.findById(stampId);
+
+      if (bidAmount > stamp.current_highest_bid) {
+        stamp.bids.push({ bidder: userId, amount: bidAmount });
+        stamp.current_highest_bid = bidAmount;
+        stamp.top_bidder = userId;
+        await stamp.save();
+
+        io.emit('newBid', { stampId, current_highest_bid: bidAmount, top_bidder: userId });
+
+        // Reset the auction end timer
+        if (bidTimers.has(stampId)) clearTimeout(bidTimers.get(stampId));
+        const timer = setTimeout(async () => {
+          // End auction and notify winner
+          io.emit('auctionEnded', { stampId, winner: userId, finalBid: bidAmount });
+          bidTimers.delete(stampId);
+        }, 30000); // 30 seconds
+
+        bidTimers.set(stampId, timer);
+      } else {
+        socket.emit('error', { message: 'Bid must be higher than the current highest bid' });
       }
-    });
-  
-    // Handle disconnection
-    socket.on('disconnect', () => {
-      console.log('User disconnected');
-    });
+    } catch (error) {
+      console.error("Error processing bid:", error);
+      socket.emit('error', { message: 'Error processing bid' });
+    }
   });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+})
   
   // Start the server
   server.listen(PORT, () => {
