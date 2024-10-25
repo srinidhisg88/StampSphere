@@ -1,6 +1,6 @@
 import Stamp from "../models/stamps.schema.js";
 import category from "../models/categories.schema.js";
-
+import {v2 as cloudinary} from 'cloudinary';
 export const createStamp = async (req, res) => {
   const { name, description, starting_bid, categoryName} = req.body;
   const image=req.file
