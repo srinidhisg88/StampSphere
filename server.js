@@ -31,6 +31,8 @@ const io = new Server(server, {
       credentials: true,
     }
   });
+app.use('/uploads', express.static('uploads')); // to serve static files
+
 
 // Routes
 app.use('/api', router);
